@@ -12,7 +12,7 @@ const data = [
   {
     id: 3,
     title: "교환",
-    user: "dlaguswns12",
+    user: "fhdkroRnfwoa",
     description: "배송되면서 옷이 찢어졌습니다 교환부탁드려요",
   },
   {
