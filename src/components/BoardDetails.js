@@ -32,8 +32,6 @@ export const BoardDetails = () => {
   });
   const [refresh, setRefresh] = useState(false);
 
-  console.log(rowDetail);
-
   useEffect(() => {
     setRowDetail(row.find(i => i.id === location.state.id));
   }, []);
@@ -73,48 +71,49 @@ export const BoardDetails = () => {
           </Typography>
           <Card sx={{ width: "60%", marginLeft: "20%" }}>
             <Box sx={{ padding: "30px" }}>
-              <InputLabel>Title</InputLabel>
-              <OutlinedInput
-                sx={{ marginTop: "10px", width: "100%", height: "50px" }}
-                value={rowDetail ? rowDetail.title : ""}
-                readOnly
-              />
-              <InputLabel sx={{ marginTop: "15px" }}>User</InputLabel>
-              <OutlinedInput
-                sx={{ marginTop: "10px", width: "100%", height: "50px" }}
-                value={rowDetail ? rowDetail.user : ""}
-                readOnly
-              />
-
-              <Typography sx={{ width: "50px", marginTop: "15px" }}>
-                Description
-              </Typography>
-              <Card sx={{ marginTop: "10px" }}>
-                <IconButton>
-                  {arrow ? (
-                    <KeyboardDoubleArrowUpIcon
-                      onClick={() => {
-                        setArrow(false);
-                      }}
-                    />
-                  ) : (
-                    <KeyboardDoubleArrowDownIcon
-                      onClick={() => {
-                        setArrow(true);
-                      }}
-                    />
+              <Card sx={{ padding: "20px", border: "1px solid #D8D8D8" }}>
+                <InputLabel>Title</InputLabel>
+                <OutlinedInput
+                  sx={{ marginTop: "10px", width: "100%", height: "50px" }}
+                  value={rowDetail ? rowDetail.title : ""}
+                  readOnly
+                />
+                <InputLabel sx={{ marginTop: "15px" }}>User</InputLabel>
+                <OutlinedInput
+                  sx={{ marginTop: "10px", width: "100%", height: "50px" }}
+                  value={rowDetail ? rowDetail.user : ""}
+                  readOnly
+                />
+                <Typography sx={{ width: "50px", marginTop: "15px" }}>
+                  Description
+                </Typography>
+                <Card sx={{ marginTop: "10px" }}>
+                  <IconButton>
+                    {arrow ? (
+                      <KeyboardDoubleArrowUpIcon
+                        onClick={() => {
+                          setArrow(false);
+                        }}
+                      />
+                    ) : (
+                      <KeyboardDoubleArrowDownIcon
+                        onClick={() => {
+                          setArrow(true);
+                        }}
+                      />
+                    )}
+                  </IconButton>
+                  <Divider />
+                  {arrow && (
+                    <Box sx={{ padding: "5%" }}>
+                      <p
+                        dangerouslySetInnerHTML={{
+                          __html: rowDetail ? rowDetail.description : ""
+                        }}
+                      ></p>
+                    </Box>
                   )}
-                </IconButton>
-                <Divider />
-                {arrow && (
-                  <Box sx={{ padding: "5%" }}>
-                    <p
-                      dangerouslySetInnerHTML={{
-                        __html: rowDetail ? rowDetail.description : ""
-                      }}
-                    ></p>
-                  </Box>
-                )}
+                </Card>
               </Card>
             </Box>
             <Divider />
@@ -133,7 +132,7 @@ export const BoardDetails = () => {
                 ))}
             </Box>
             <Box sx={{ padding: "30px" }}>
-              <Card>
+              <Card sx={{ border: "1px solid #D8D8D8" }}>
                 <Typography sx={{ padding: "15px 20px 15px 20px" }}>
                   댓글
                 </Typography>

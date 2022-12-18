@@ -9,11 +9,16 @@ import {
   TableContainer,
   TableHead,
   TableBody,
-  TableRow
+  TableRow,
+  OutlinedInput,
+  Select,
+  MenuItem,
+  IconButton
 } from "@mui/material";
 import { useAtom } from "jotai";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   AlertPopupData,
   ChangeMod,
@@ -28,10 +33,10 @@ export const Board = () => {
   const [row, setRow] = useAtom(Row);
   const [alertPopupData, setAlertPopupData] = useAtom(AlertPopupData);
   const [, setRowChangeData] = useAtom(RowChangeData);
-  const [type, setType] = useState("ADD");
   const navigate = useNavigate();
-  const [myRow, setMyRow] = useAtom(MyRow);
+  const [myRow] = useAtom(MyRow);
   const [refreshRow, setRefreshRow] = useAtom(RefreshRow);
+  const [keyword, setKeyword] = useState({ type: "1", keyword: "" });
 
   useEffect(() => {
     if (localStorage.getItem("row")) {
@@ -46,6 +51,34 @@ export const Board = () => {
       }
     }
   }, [refreshRow, myRow]);
+
+  const onClickFindRow = () => {
+    switch (keyword.type) {
+      case "TITLE":
+        setRow(
+          JSON.parse(localStorage.getItem("row")).filter(e =>
+            e.title.includes(keyword.keyword)
+          )
+        );
+        break;
+      case "USER":
+        setRow(
+          JSON.parse(localStorage.getItem("row")).filter(e =>
+            e.user.includes(keyword.keyword)
+          )
+        );
+        break;
+      default:
+        setAlertPopupData({
+          ...alertPopupData,
+          open: true,
+          msg: "검색할 타입을 선택해 주세요.",
+          rightCallback: () => {
+            setAlertPopupData({ ...alertPopupData, open: false });
+          }
+        });
+    }
+  };
 
   const onClickCell = row => {
     if (row.field !== "button") {
@@ -91,6 +124,40 @@ export const Board = () => {
         {myRow ? "내가 쓴 글" : "게시판"}
       </Typography>
       <Box sx={{ width: "80%", marginLeft: "10%" }}>
+        <Box sx={{ height: "40px", float: "right", marginBottom: "15px" }}>
+          <Select
+            sx={{
+              width: "100px",
+              fontSize: "12px",
+              backgroundColor: "white",
+              height: "40px"
+            }}
+            value={keyword.type}
+            onChange={e => {
+              setKeyword({ ...keyword, type: e.target.value });
+            }}
+          >
+            <MenuItem value="1">선택</MenuItem>
+            <MenuItem value={"TITLE"}>제목</MenuItem>
+            <MenuItem value={"USER"}>유저</MenuItem>
+          </Select>
+          <OutlinedInput
+            sx={{
+              width: "100px",
+              fontSize: "12px",
+              backgroundColor: "white",
+              height: "40px",
+              marginLeft: "15px"
+            }}
+            value={keyword.keyword}
+            onChange={e => {
+              setKeyword({ ...keyword, keyword: e.target.value });
+            }}
+          />
+          <IconButton onClick={onClickFindRow}>
+            <SearchIcon />
+          </IconButton>
+        </Box>
         <TableContainer
           component={Paper}
           sx={{
@@ -104,14 +171,12 @@ export const Board = () => {
                 No.
               </TableCell>
               <TableCell align="center" sx={{ border: "1px solid #8C8C8C" }}>
-                Title
+                제목
               </TableCell>
               <TableCell align="center" sx={{ border: "1px solid #8C8C8C" }}>
-                User
+                유저
               </TableCell>
-              <TableCell align="center" sx={{ border: "1px solid #8C8C8C" }}>
-                Button
-              </TableCell>
+              <TableCell align="center" sx={{ border: "1px solid #8C8C8C" }} />
             </TableHead>
             <TableBody>
               {row && row[0] !== null
@@ -158,26 +223,47 @@ export const Board = () => {
                                 color: "#6B66FF"
                               }}
                               onClick={() => {
-                                const delRow = row.filter(
+                                const notDelRow = row.filter(
                                   e => e.id !== item.id
                                 );
-                                setAlertPopupData({
-                                  ...alertPopupData,
-                                  open: true,
-                                  msg: "삭제 되었습니다.",
-                                  rightCallback: () => {
-                                    localStorage.removeItem("row");
-                                    localStorage.setItem(
-                                      "row",
-                                      JSON.stringify(delRow)
-                                    );
-                                    setRefreshRow(true);
-                                    setAlertPopupData({
-                                      ...alertPopupData,
-                                      open: false
-                                    });
-                                  }
-                                });
+                                const delRow = row.filter(
+                                  e => e.id === item.id
+                                );
+                                if (
+                                  JSON.parse(localStorage.getItem("isLogin"))
+                                    .id === delRow[0].user
+                                ) {
+                                  setAlertPopupData({
+                                    ...alertPopupData,
+                                    open: true,
+                                    msg: "삭제 되었습니다.",
+                                    rightCallback: () => {
+                                      localStorage.removeItem("row");
+                                      localStorage.setItem(
+                                        "row",
+                                        JSON.stringify(notDelRow)
+                                      );
+                                      setRefreshRow(!refreshRow);
+                                      setAlertPopupData({
+                                        ...alertPopupData,
+                                        open: false
+                                      });
+                                    }
+                                  });
+                                } else {
+                                  setAlertPopupData({
+                                    ...alertPopupData,
+                                    open: true,
+                                    msg:
+                                      "해당 유저가 아닙니다. 유저 이름을 확인해 주세요.",
+                                    rightCallback: () => {
+                                      setAlertPopupData({
+                                        ...alertPopupData,
+                                        open: false
+                                      });
+                                    }
+                                  });
+                                }
                               }}
                             >
                               삭제
@@ -195,6 +281,12 @@ export const Board = () => {
                                 }
                               }}
                               onClick={() => {
+                                setRowChangeData({
+                                  id: 0,
+                                  title: "",
+                                  user: "",
+                                  description: ""
+                                });
                                 checkId(item);
                               }}
                             >
@@ -222,6 +314,12 @@ export const Board = () => {
           }}
           onClick={() => {
             navigate("/editBoard", { state: { changeMod: "ADD" } });
+            setRowChangeData({
+              id: 0,
+              title: "",
+              user: "",
+              description: ""
+            });
           }}
         >
           등록

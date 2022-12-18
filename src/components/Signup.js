@@ -49,8 +49,6 @@ export const Signup = () => {
     : [];
   const [alertPopupData, setAlertPopupData] = useAtom(AlertPopupData);
 
-  console.log(allUsers);
-
   useEffect(() => {
     if (localStorage.getItem("loginUser")) {
       navigate("/");

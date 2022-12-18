@@ -4,7 +4,7 @@ import React from "react";
 import { AlertPopupData } from "./data/Atom";
 
 export const AlertPopup = () => {
-  const [alertPopupData, setAlertPopupData] = useAtom(AlertPopupData);
+  const [alertPopupData] = useAtom(AlertPopupData);
 
   return (
     <Dialog open={alertPopupData.open}>
@@ -21,7 +21,7 @@ export const AlertPopup = () => {
               fontSize: "14px"
             }}
           >
-            {alertPopupData.rightCallback === (() => {}) && (
+            {alertPopupData.leftCallback === (() => {}) && (
               <Button
                 onClick={alertPopupData.leftCallback}
                 sx={{

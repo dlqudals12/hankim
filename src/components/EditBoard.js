@@ -32,27 +32,38 @@ export const EditBoard = props => {
   const onClickAddUpd = () => {
     let row = JSON.parse(localStorage.getItem("row"));
 
-    if (
-      !row
-        .map(items => {
-          return items.title === rowChangeData.title;
-        })
-        .includes(true)
-    ) {
+    if (Boolean(rowChangeData.title)) {
       if (changeMod === "ADD") {
-        row.push(rowChangeData);
-        localStorage.removeItem("row");
-        localStorage.setItem("row", JSON.stringify(row));
-        setAlertPopupData({
-          ...alertPopupData,
-          msg: rowChangeData.title + "가 추가되었습니다.",
-          open: true,
-          rightCallback: () => {
-            setAlertPopupData({ ...alertPopupData, open: false });
-            setRefresh(!refresh);
-            navigate("/");
-          }
-        });
+        if (
+          !row
+            .map(items => {
+              return items.title === rowChangeData.title;
+            })
+            .includes(true)
+        ) {
+          row.push(rowChangeData);
+          localStorage.removeItem("row");
+          localStorage.setItem("row", JSON.stringify(row));
+          setAlertPopupData({
+            ...alertPopupData,
+            msg: rowChangeData.title + "가 추가되었습니다.",
+            open: true,
+            rightCallback: () => {
+              setAlertPopupData({ ...alertPopupData, open: false });
+              setRefresh(!refresh);
+              navigate("/");
+            }
+          });
+        } else {
+          setAlertPopupData({
+            ...alertPopupData,
+            msg: "Title이 중복되었습니다.",
+            open: true,
+            rightCallback: () => {
+              setAlertPopupData({ ...alertPopupData, open: false });
+            }
+          });
+        }
       } else {
         const updRow = row.map(item => {
           return item.id === rowChangeData.id ? rowChangeData : item;
@@ -75,8 +86,8 @@ export const EditBoard = props => {
     } else {
       setAlertPopupData({
         ...alertPopupData,
-        msg: "Title이 중복되었습니다.",
         open: true,
+        msg: "제목을 입력해 주세요.",
         rightCallback: () => {
           setAlertPopupData({ ...alertPopupData, open: false });
         }
@@ -92,7 +103,7 @@ export const EditBoard = props => {
         ...rowChangeData,
         id: rows[rows.length - 1].id + 1,
         user: localStorage.getItem("isLogin")
-          ? JSON.parse(localStorage.getItem("isLogin")).userName.toString()
+          ? JSON.parse(localStorage.getItem("isLogin")).id.toString()
           : "Guest"
       });
     } else {
@@ -132,7 +143,7 @@ export const EditBoard = props => {
         </Typography>
         <Card sx={{ width: "60%", marginLeft: "20%" }}>
           <Box sx={{ padding: "30px" }}>
-            <InputLabel>Title</InputLabel>
+            <InputLabel>제목</InputLabel>
             <OutlinedInput
               sx={{ marginTop: "10px", width: "100%", height: "50px" }}
               value={rowChangeData.title}
@@ -140,7 +151,7 @@ export const EditBoard = props => {
                 setRowChangeData({ ...rowChangeData, title: e.target.value });
               }}
             />
-            <InputLabel sx={{ marginTop: "15px" }}>User</InputLabel>
+            <InputLabel sx={{ marginTop: "15px" }}>유저</InputLabel>
             <OutlinedInput
               sx={{ marginTop: "10px", width: "100%", height: "50px" }}
               value={rowChangeData.user}
@@ -150,7 +161,7 @@ export const EditBoard = props => {
             <Typography
               sx={{ width: "50px", marginTop: "15px", marginBottom: "10px" }}
             >
-              Description
+              내용
             </Typography>
             <Editor
               onInit={(evt, editor) => (editorRef.current = editor)}
@@ -214,6 +225,7 @@ export const EditBoard = props => {
                 backgroundColor: "#DAD9FF",
                 color: "#000000"
               }}
+              onClick={onClickAddUpd}
             >
               등록
             </Button>

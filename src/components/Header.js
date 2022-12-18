@@ -13,7 +13,7 @@ import {
   Typography
 } from "@mui/material";
 import { useAtom } from "jotai";
-import { AlertPopupData, MyRow, SearchStatus } from "./data/Atom";
+import { AlertPopupData, MyRow, Row, SearchStatus } from "./data/Atom";
 import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
@@ -27,6 +27,7 @@ export const Header = () => {
   const [alertPopupData, setAlertPopupData] = useAtom(AlertPopupData);
   const [myRow, setMyRow] = useAtom(MyRow);
   const [loginMenu, setLoginMenu] = useState(false);
+  const [row, setRow] = useAtom(Row);
 
   useEffect(() => {
     if (localStorage.getItem("isLogin")) {
@@ -60,8 +61,10 @@ export const Header = () => {
           <List sx={{ marginLeft: "30px", width: "300px" }}>
             <ListItem
               onClick={() => {
-                navigate("/");
+                setOpenDrawer(false);
                 setMyRow(false);
+                setRow(JSON.parse(localStorage.getItem("row")));
+                navigate("/");
               }}
               sx={{ cursor: "pointer" }}
             >
@@ -70,6 +73,7 @@ export const Header = () => {
             {localStorage.getItem("isLogin") && (
               <ListItem
                 onClick={() => {
+                  setOpenDrawer(false);
                   setMyRow(true);
                   setOpenDrawer(false);
                 }}
@@ -151,10 +155,11 @@ export const Header = () => {
           }}
           onClick={() => {
             setMyRow(false);
+            setRow(JSON.parse(localStorage.getItem("row")));
             navigate("/");
           }}
         >
-          Blog
+          HOME
         </Button>
         <IconButton
           sx={{

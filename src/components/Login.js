@@ -187,7 +187,7 @@ export const Login = () => {
                   </FormHelperText>
                 </>
               )}
-              {validation.password && !!validation.nullPassword ? (
+              {validation.password && !validation.nullPassword ? (
                 <>
                   <FormHelperText sx={{ color: "red" }}>
                     {validMsg("비밀번호").matches}
