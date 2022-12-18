@@ -11,7 +11,7 @@ const data = [
   { id: 2, title: "라마바", user: "jky2323", description: "아아아아아아" },
   {
     id: 3,
-    title: "사아자",
+    title: "사아",
     user: "dlaguswns12",
     description: "ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜ",
   },
